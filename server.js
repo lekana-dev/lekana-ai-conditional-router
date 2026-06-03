@@ -12,6 +12,8 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 4010;
 const SERVICE_VERSION = "1.0.0";
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-1.5-flash";
 
 // Middleware
 app.use(express.json({ limit: "50mb" }));
@@ -25,6 +27,11 @@ app.get("/health", (req, res) => {
     status: "ok",
     service: "conditional-router",
     version: SERVICE_VERSION,
+    llm: {
+      provider: "gemini",
+      model: GEMINI_MODEL,
+      apiKeyConfigured: Boolean(GEMINI_API_KEY),
+    },
   });
 });
 
@@ -314,4 +321,10 @@ app.listen(PORT, () => {
   console.log(`Conditional Router service running on port ${PORT}`);
   console.log(`Health check: http://localhost:${PORT}/health`);
   console.log(`Process endpoint: POST http://localhost:${PORT}/api/v1/process`);
+  console.log(`Gemini model: ${GEMINI_MODEL}`);
+  if (!GEMINI_API_KEY) {
+    console.warn(
+      "GEMINI_API_KEY is not set. Set GEMINI_API_KEY in the environment.",
+    );
+  }
 });
