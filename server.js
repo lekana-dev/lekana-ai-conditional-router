@@ -310,8 +310,14 @@ function buildOutput(matchedItems, input, outputMode, sourceType) {
 // ============================================
 // Start Server
 // ============================================
-app.listen(PORT, () => {
-  console.log(`Conditional Router service running on port ${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/health`);
-  console.log(`Process endpoint: POST http://localhost:${PORT}/api/v1/process`);
-});
+// Start a server only when run directly (node server.js).
+// On Vercel the app is imported by api/index.js and served as a function.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Conditional Router service running on port ${PORT}`);
+    console.log(`Health check: http://localhost:${PORT}/health`);
+    console.log(`Process endpoint: POST http://localhost:${PORT}/api/v1/process`);
+  });
+}
+
+module.exports = app;
